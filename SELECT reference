@@ -1,0 +1,99 @@
+#The SELECT command is used to show data from a database.
+
+#The output from a SELECT statement is always a grid - with a number of rows and a number of columns.
+
+#Simple SELECT
+#The simplest SELECT commands involve a single table:
+
+SQL	                                Result
+SELECT name, population             name	                    population
+  FROM bbc                          Canada	                    32000000
+ WHERE region='North America'       United States of America	295000000
+
+#The SELECT line determines which columns to show - in this case name and population, both of which are columns of the bbc table.
+#The WHERE clause determines which rows to show
+#The SELECT statement may involve data from more than one table using a JOIN or a UNION.
+#SELECT statements may nested - that is the output from one SELECT may be the input to another SELECT.
+#The output from a SELECT may be added to another table using INSERT .. SELECT
+#The select statement may aggregate values using a SELECT .. GROUP BY clause
+
+
+#Concatenate Columns
+
+#You can put two or more strings together using the concatenate operator.
+
+#1. You can put two or more strings together using the concatenate operator. The SQL standard says you should use || but there are many differences between the main vendors.
+
+SELECT CONCAT(region, name)
+  FROM bbc
+
+Result:
+CONCAT(region..
+AfricaAngola
+AfricaBenin
+
+
+#Like
+
+#How do I use LIKE in a sql SELECT statement.
+
+#1. The LIKE command allows "Wild cards". A % may be used to match and string, _ will match any single character.
+
+#The example shows countries begining with Z. The country Zambia matches because ambia matches with the %.
+
+SELECT name FROM bbc
+WHERE name LIKE 'Z%'
+
+Result:
+name
+Zambia
+Zimbabwe
+
+
+#Apostrophe
+
+#How to build a statement on a word with an Apostrophe such as WHERE name='Tom's Book'
+
+SELECT * FROM bbc
+WHERE name = 'Cote d''Ivoire'
+
+
+#Full text search
+
+#Full text search with SQL? such as i want to find a specific word in any colum of the table
+
+#1. The "brute force" method is to use use the LIKE operator against any of the fields to be searched. This will be relatively expensive - but probably good enough in many cases. The term to search for should be quoted and placed within two wild cards.
+
+#You should construct the string literal in some scripting language - don't forget to quote it.
+
+SELECT name FROM bbc
+WHERE name LIKE '%the%'
+
+Result:
+name
+The Gambia
+St Vincent and the Grenadines
+The Philippines
+The Netherlands
+The Maldives
+
+
+#Column name
+
+#How can I display a column name for an aggregate function?
+
+#1. Where one of the results returned is calculated (for example with an aggregate) the column name may be assigned arbitrarily.
+
+#You should be able to specify a column name.
+
+SELECT region, SUM(population) AS x
+  FROM bbc
+GROUP BY region
+
+Result:
+region	x
+Africa	698081725
+Americas	74329000
+Asia-Pacific	2173791900
+
+
