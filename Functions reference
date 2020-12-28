@@ -1,0 +1,151 @@
+SQL Functions
+Standard SQL functions and some common non-standard function. MS SQL, Oracle, MySQL and PostgreSQL provide support or have alternatives. Where possible alternatives are given.
+
+ABS             CURRENT_TIMESTAMP   LENGTH	    + INTERVAL	    SUBSTRING(ansi)
+AVG	            DATEPART	        MAX	        + (string)	    SUBSTRING
+Strings	        DAY	                MIN	        POSITION	    SUM
+CASE	        DIV	                MINUTE	    QUARTER	        TAN
+CAST	        EXTRACT	            MOD	        RANK	        TO_CHAR(dates)
+CEIL	        FLOOR	            MONTH	    REPLACE	        TRIM
+COALESCE        HOUR	            NULLIF	    RIGHT	        YEAR
+CONCAT	        IFNULL	            NVL	        ROUND	
+COS	            INSTR	            PATINDEX	SECOND	
+COUNT	        LEFT	            % MODULO	SIN	
+CURRENT_DATE	LEN	                +(dates)   	SUBSTR
+
+
+Concatenate strings
+Concatenation means "stick strings together". In this example we concatenate three strings, name and region are string attributes of the table, ' is in ' is a string literal.
+
+SELECT CONCAT(name, ' is in ', region)
+  FROM bbc
+  WHERE name LIKE 'D%'
+
+Result:
+|-------------------------------------------|
+|              CONCAT(name, ..              |
+|-------------------------------------------|
+|Democratic Republic of Congo is in Africa  |
+|Denmark is in Europe                       |
+|Djibouti is in Africa                      |
+|Dominica is in Americas                    |
+|Dominican Republic is in Americas          |
+|-------------------------------------------|
+
+
+Extracting substrings
+Substring: Extracting part of a string.
+We from position 1 (the beginning) we take two characters. 4.
+
+'Afghanistan' -> 'Af'
+'China'       -> 'Ch'
+'Sri Lanka'   -> 'Sr'
+The SQL standard insists on a horrible syntax:
+
+SUBSTRING(name FROM 1 FOR 2) 
+SELECT name, SUBSTRING(name FROM 1 FOR 2)
+ FROM bbc
+
+Result:
+|-----------------------------------|
+|     name	    |  SUBSTRING(nam..  |
+|-----------------------------------|
+|Angola	        |An                 |  
+|Benin	        |Be                 |
+|Botswana	    |Bo                 |
+|Burkina Faso	|Bu                 |
+|Burundi	    |Bu                 |
+|Cameroon	    |Ca                 |
+|Cape Verde	    |Ca                 |
+|-----------------------------------|
+
+
+Lower case
+UPPER CASE is similar.
+
+SELECT LOWER(name) FROM bbc
+ WHERE UPPER(region)='SOUTH AMERICA'
+
+Result:
+|-------------|
+| LOWER(name) |
+|-------------|
+|argentina    |
+|bolivia      |
+|brazil       |
+|chile        |
+|colombia     |
+|ecuador      |
+|guyana       |
+|paraguay     |
+|peru         |
+|surinam      |
+|uruguay      |
+|venezuela    |
+|-------------|
+
+
+Finding a substring in a string
+Here we extract the first word of a country name. INSTR gives this position of one string within another, we use this and substring to pick out the first few characters.
+
+SELECT name,
+       POSITION(' ' IN name),
+       SUBSTRING(name FROM 1 FOR POSITION(' ' IN name))
+  FROM bbc
+  WHERE name LIKE '% %'
+
+Result:
+|------------------------------------------------------------------|
+|       name    	        |   POSITION(' ' ..	|  SUBSTRING(nam.. |
+|------------------------------------------------------------------|
+| Burkina Faso	            | 8	                | Burkina          |
+| Cape Verde	            | 5	                | Cape             |
+| Central African Republic	| 8	                | Central          |
+| Democratic Republic of Co | 11	            | Democratic       |
+| Equatorial Guinea	        | 11	            | Equatorial       |
+| Ivory Coast	            | 6                 | Ivory            |
+| Republic of Congo         | 9	                | Republic         |
+|------------------------------------------------------------------|
+
+
+Formatting numbers to two decimal places.
+This rounds up or down
+
+SELECT name,
+   population,
+   ROUND(population/1000000,2),
+   ROUND(population,-6)
+  FROM bbc
+  WHERE region='North America'
+
+SELECT title, score, FORMAT(score,2)
+ FROM movie
+WHERE id <= 10
+
+Result:
+|------------------------------------------------------------------------------|
+|            name          | population |	ROUND(populat.. | ROUND(populat..  |
+|------------------------------------------------------------------------------|
+| Canada                   | 32000000   | 32	            | 32000000         |
+| Mexico                   | 106400000  | 106.4	            | 106000000        |
+| United States of America | 295000000	| 295               | 295000000        |
+|------------------------------------------------------------------------------|
+
+
+Replace a NULL with a specific value
+The SQL standard is COALESCE
+
+SELECT code, name,
+    COALESCE(leader, 'NO LEADER RECORDED!')
+  FROM party
+
+Result:
+|------------------------------------------------------|
+|  code  |    name          |    COALESCE(lead..       |
+|------------------------------------------------------|
+| Com	 | Communist        | NO LEADER RECORDED!      |
+| Con	 | Conservative     | McLetchie MSP, David     |
+| Green	 | Green	        | NO LEADER RECORDED!      |
+| Lab	 | Labour	        | Dewar MSP, Rt Hon Donald |
+| LD	 | Liberal Democrat	| Wallace QC MSP, Mr Jim   |
+|------------------------------------------------------|
